@@ -3,7 +3,16 @@ const qrcode = require('qrcode-terminal');
 const { google } = require('googleapis');
 const axios = require('axios');
 
-const client = new Client({ authStrategy: new LocalAuth() });
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ]
+    }
+});
 const GC_NAME = 'Yash SMS Banking';
 
 // ─── SPEND PARSING ───────────────────────────────────────────────────────────
