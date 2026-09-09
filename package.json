@@ -1,0 +1,17 @@
+{
+  "name": "whatsapp-bot-sms",
+  "version": "1.0.0",
+  "description": "A whatsapp bot to look at my spending and gimme budget.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.15.2",
+    "googleapis": "^171.4.0",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.34.7"
+  }
+}
