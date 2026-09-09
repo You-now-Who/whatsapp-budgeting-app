@@ -143,7 +143,7 @@ client.on('message', async msg => {
     } catch (err) {
       console.error('Error handling spend message:', err);
     } 
-  } catch (error) {
+  } catch (err) {
     console.error("Error handling WhatsApp message:", err);
   }
 });
