@@ -95,43 +95,47 @@ async function getMonthlyTotal() {
 client.on('qr', qr => qrcode.generate(qr, { small: true }));
 
 client.on('message', async msg => {
-  const chat = await msg.getChat();
-  if (!chat.isGroup || chat.name !== GC_NAME) return;
-
-  // -<amount> gbp — log a GBP reduction (refund/correction)
-  const reduceMatch = msg.body.match(/^-([\d,]+(?:\.\d{1,2})?)\s*gbp$/i);
-  if (reduceMatch) {
-    const amount = parseFloat(reduceMatch[1].replace(/,/g, ''));
-    try {
-      await logExpense(-amount, 'GBP', msg.body);
-      const [monthTotal, rate] = await Promise.all([getMonthlyTotal(), getGBPtoINR()]);
-      await msg.reply(
-        `↩️ Reduced: £${amount.toFixed(2)}\n` +
-        `📊 Month so far: £${monthTotal.toFixed(2)} (₹${(monthTotal * rate).toFixed(0)})\n` +
-        `💱 GBP → INR: ${rate.toFixed(2)}`
-      );
-    } catch (err) {
-      console.error('Error handling GBP reduction:', err);
-    }
-    return;
-  }
-
-  const spend = extractSpend(msg.body);
-  if (!spend) return;
-
   try {
-    await logExpense(spend.amount, spend.currency, msg.body);
+    const chat = await msg.getChat();
+    if (!chat.isGroup || chat.name !== GC_NAME) return;
 
-    const [monthTotal, rate] = await Promise.all([getMonthlyTotal(), getGBPtoINR()]);
+    // -<amount> gbp — log a GBP reduction (refund/correction)
+    const reduceMatch = msg.body.match(/^-([\d,]+(?:\.\d{1,2})?)\s*gbp$/i);
+    if (reduceMatch) {
+      const amount = parseFloat(reduceMatch[1].replace(/,/g, ''));
+      try {
+        await logExpense(-amount, 'GBP', msg.body);
+        const [monthTotal, rate] = await Promise.all([getMonthlyTotal(), getGBPtoINR()]);
+        await msg.reply(
+          `↩️ Reduced: £${amount.toFixed(2)}\n` +
+          `📊 Month so far: £${monthTotal.toFixed(2)} (₹${(monthTotal * rate).toFixed(0)})\n` +
+          `💱 GBP → INR: ${rate.toFixed(2)}`
+        );
+      } catch (err) {
+        console.error('Error handling GBP reduction:', err);
+      }
+      return;
+    }
 
-    const reply =
-      `✅ Logged: ${spend.amount} ${spend.currency}\n` +
-      `📊 Month so far: £${monthTotal.toFixed(2)} (₹${(monthTotal * rate).toFixed(0)})\n` +
-      `💱 GBP → INR: ${rate.toFixed(2)}`;
+    const spend = extractSpend(msg.body);
+    if (!spend) return;
 
-    await msg.reply(reply);
-  } catch (err) {
-    console.error('Error handling spend message:', err);
+    try {
+      await logExpense(spend.amount, spend.currency, msg.body);
+
+      const [monthTotal, rate] = await Promise.all([getMonthlyTotal(), getGBPtoINR()]);
+
+      const reply =
+        `✅ Logged: ${spend.amount} ${spend.currency}\n` +
+        `📊 Month so far: £${monthTotal.toFixed(2)} (₹${(monthTotal * rate).toFixed(0)})\n` +
+        `💱 GBP → INR: ${rate.toFixed(2)}`;
+
+      await msg.reply(reply);
+    } catch (err) {
+      console.error('Error handling spend message:', err);
+    } 
+  } catch (error) {
+    console.error("Error handling WhatsApp message:", err);
   }
 });
 
