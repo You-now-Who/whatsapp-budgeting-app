@@ -42,6 +42,7 @@ async function getGBPtoINR() {
 
 // ─── GOOGLE SHEETS ────────────────────────────────────────────────────────────
 
+// REPLACE with your sheet ID
 const SHEET_ID = '1ww6AOa0UMu5ImWn-m8ZhBxT1enQphWU_XigpUjq8GX8';
 const SHEET_NAME = 'Expenses';
 
